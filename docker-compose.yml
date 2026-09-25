@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: tripflow-postgres
+    environment:
+      POSTGRES_DB: tripflow
+      POSTGRES_USER: tripflow
+      POSTGRES_PASSWORD: tripflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - tripflow-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  tripflow-postgres-data:
