@@ -1,5 +1,6 @@
 package com.tripflow.user;
 
+import com.tripflow.tripmember.TripMember;
 import jakarta.persistence.*;
 import com.tripflow.trip.Trip;
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ public class User {
     @OneToMany(mappedBy = "owner")
     private List<Trip> trips = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<TripMember> tripMemberships = new ArrayList<>();
     public User() {
     }
 
@@ -44,6 +47,10 @@ public class User {
 
     public List<Trip> getTrips() {
         return trips;
+    }
+
+    public List<TripMember> getTripMemberships() {
+        return tripMemberships;
     }
 
     public void setUsername(String username) {

@@ -1,6 +1,10 @@
 package com.tripflow.trip;
+import com.tripflow.tripmember.TripMember;
 import com.tripflow.user.User;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Trip {
@@ -16,6 +20,9 @@ public class Trip {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
+
+    @OneToMany(mappedBy = "trip")
+    private List<TripMember> members = new ArrayList<>();
 
     public Trip() {
     }
@@ -39,6 +46,10 @@ public class Trip {
 
     public User getOwner() {
         return owner;
+    }
+
+    public List<TripMember> getMembers(){
+        return members;
     }
 
     public void setTitle(String title) {
