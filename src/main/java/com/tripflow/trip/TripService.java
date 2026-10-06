@@ -1,6 +1,8 @@
 package com.tripflow.trip;
-
+import com.tripflow.kafka.TripEventProducer;
+import com.tripflow.kafka.event.TripCreatedEvent;
 import com.tripflow.common.exception.ResourceNotFoundException;
+import com.tripflow.kafka.TripEventProducer;
 import com.tripflow.user.User;
 import com.tripflow.user.UserRepository;
 import org.springframework.stereotype.Service;
@@ -12,13 +14,16 @@ public class TripService {
 
     private final TripRepository tripRepository;
     private final UserRepository userRepository;
+    private final TripEventProducer tripEventProducer;
 
     public TripService(
             TripRepository tripRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            TripEventProducer tripEventProducer
     ) {
         this.tripRepository = tripRepository;
         this.userRepository = userRepository;
+        this.tripEventProducer = tripEventProducer;
     }
 
     public Trip createTrip(
@@ -34,7 +39,17 @@ public class TripService {
         Trip trip = new Trip(title, description);
         trip.setOwner(owner);
 
-        return tripRepository.save(trip);
+        Trip savedTrip = tripRepository.save(trip);
+
+        TripCreatedEvent event = new TripCreatedEvent(
+                savedTrip.getId(),
+                owner.getId(),
+                savedTrip.getTitle()
+        );
+
+        tripEventProducer.sendTripCreatedEvent(event);
+
+        return savedTrip;
     }
 
     public List<Trip> getTrips() {

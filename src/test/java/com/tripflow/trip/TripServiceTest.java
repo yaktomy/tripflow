@@ -1,6 +1,8 @@
 package com.tripflow.trip;
 
 import com.tripflow.common.exception.ResourceNotFoundException;
+import com.tripflow.kafka.TripEventProducer;
+import com.tripflow.kafka.event.TripCreatedEvent;
 import com.tripflow.user.User;
 import com.tripflow.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +29,9 @@ class TripServiceTest {
 
     @InjectMocks
     private TripService tripService;
+
+    @Mock
+    private TripEventProducer tripEventProducer;
 
     private User user;
 
@@ -64,6 +69,7 @@ class TripServiceTest {
 
         verify(userRepository).findById(1L);
         verify(tripRepository).save(any(Trip.class));
+        verify(tripEventProducer).sendTripCreatedEvent(any(TripCreatedEvent.class));
     }
 
     @Test
